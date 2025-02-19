@@ -1,17 +1,16 @@
-pip install google-api-python-client
-
-pip install nltk
-
-pip install Flask-Cors
-
-pip install Flask-SQLAlchemy
-
-pip install PyMySQL
-
-pip install pandas
-
-pip install joblib
-
-pip install pymysql
-
-pip install emoji
+google-api-python-client
+nltk
+Flask-Cors
+Flask-SQLAlchemy
+PyMySQL
+pandas
+joblib
+emoji
+google-api-python-client
+nltk
+Flask-Cors
+Flask-SQLAlchemy
+PyMySQL
+pandas
+joblib
+emoji
