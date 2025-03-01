@@ -35,13 +35,13 @@ const Login = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gray-100 p-5">
-       <img
-              src={login}
-              alt=" login"
-              className="w-[30rem] mt-[2.5rem] h-[26.1rem] max-w-[98%] object-cover shadow-md"
-            />
+      <img
+        src={login}
+        alt=" login"
+        className="w-[30rem] mt-[2.5rem] h-[26.1rem] max-w-[98%] object-cover shadow-md hidden lg:block"
+      />
       <div className="w-full max-w-sm p-9 pr-[3rem] mt-10 bg-white pb-[2.1rem]   shadow-md">
-        <h2 className="text-2xl font-bold ml-[7rem] text-[2rem] text-[rgb(202,0,42)] mb-6">
+        <h2 className="text-2xl font-bold ml-[7rem] text-[2rem] text-[#1E3A8A] mb-6">
           Login
         </h2>
         <form className="flex flex-col" onSubmit={handleLogin}>
@@ -85,7 +85,7 @@ const Login = () => {
           )}
           <button
             type="submit"
-            className="w-full p-3 bg-[rgb(202,0,42)] text-white rounded-md hover:green-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            className="w-full p-3 bg-[#14B8A6] text-white rounded-md hover:green-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           >
             Login
           </button>
@@ -94,7 +94,7 @@ const Login = () => {
           Don't have an account?{" "}
           <Link
             to="/signup"
-            className="text-[rgb(202,0,42)] hover:text-green-500   hover:underline"
+            className="text-[#1E3A8A] hover:text-green-500   hover:underline"
           >
             Signup
           </Link>

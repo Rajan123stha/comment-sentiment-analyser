@@ -1,61 +1,85 @@
-import React, { useState } from "react";
+import React from "react";
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
+import logo from "../assets/logo.png";
 
 const Footer = () => {
-  const footerStyle = {
-    backgroundColor: "rgb(202,0,42)", // Equivalent to Tailwind's "bg-slate-100"
-    borderTop: "1px solid #d1d5db", // Equivalent to "border-t border-gray-300"
-    color: "white", // Equivalent to "text-black"
-    padding: "16px 0", // Equivalent to "py-4"
-    textAlign: "center", // Centers the text
-  };
-
-  const containerStyle = {
-    maxWidth: "1200px", // Equivalent to "container mx-auto"
-    margin: "0 auto",
-  };
-
-  const paragraphStyle = {
-    marginBottom: "4px", // Equivalent to "mb-2"
-  };
-
   return (
-    <footer style={footerStyle} className="bg-[rgb(202,0,42)]">
-  <div className="pt-[1rem] text-[14px] text-white">
-    <a href="/aboutus" className="mr-[3rem] hover:underline">
-      About Us
-    </a>
-    <a href="/terms" className="mr-[3rem] hover:underline">
-      Terms
-    </a>
-    <a href="/privacy" className="mr-[3rem] hover:underline">
-      Privacy Policy
-    </a>
-    <a href="/faq" className="hover:underline">
-      FAQs
-    </a>
-   
- 
-      <br></br>
-      <br></br>
-      <div style={containerStyle}>
-        <p style={paragraphStyle} className="text-[10px]">
-          &copy; {new Date().getFullYear()} Smart Filter. All rights
-          reserved
-        </p>
-      </div>
-        {/* Uncomment and style as needed:
-        <div style={{ display: "flex", justifyContent: "center", gap: "16px" }}>
-          <a href="/privacy-policy" style={{ textDecoration: "underline" }}>
-            Privacy Policy
+    <footer
+      className="bg-slate-100 text-black pt-6 border-t border-gray-300 "
+      id="footer"
+    >
+      <div className="max-w-screen-xl mx-auto px-6 md:px-12">
+        {/* Logo and Branding Section */}
+        <div className="flex justify-center md:justify-between items-center mb-6">
+          <img src={logo} alt="Reactify Logo" className="h-12" />
+        </div>
+
+        {/* Navigation Links Section */}
+        <div className="flex justify-center md:justify-between space-x-6 mb-4 text-sm">
+          <a
+            href="/aboutus"
+            className="hover:text-[#14B8A6] transition duration-300"
+          >
+            About Us
           </a>
-          <a href="/terms-of-service" style={{ textDecoration: "underline" }}>
-            Terms of Service
-          </a>
-          <a href="/contact" style={{ textDecoration: "underline" }}>
+          <a
+            href="/contactus"
+            className="hover:text-[#14B8A6] transition duration-300"
+          >
             Contact Us
           </a>
+          <a
+            href="/privacy"
+            className="hover:text-[#14B8A6] transition duration-300"
+          >
+            Privacy Policy
+          </a>
+          <a
+            href="/faq"
+            className="hover:text-[#14B8A6] transition duration-300"
+          >
+            FAQs
+          </a>
         </div>
-        */}
+
+        {/* Social Media Icons Section */}
+        <div className="flex justify-center space-x-6 mb-6">
+          <a
+            href="https://facebook.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaFacebook className="text-2xl hover:text-[#14B8A6] transition duration-300" />
+          </a>
+          <a
+            href="https://twitter.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaTwitter className="text-2xl hover:text-[#14B8A6] transition duration-300" />
+          </a>
+          <a
+            href="https://instagram.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaInstagram className="text-2xl hover:text-[#14B8A6] transition duration-300" />
+          </a>
+          <a
+            href="https://linkedin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaLinkedin className="text-2xl hover:text-[#14B8A6] transition duration-300" />
+          </a>
+        </div>
+
+        {/* Copyright Section */}
+        <div className="text-center text-xs md:text-sm">
+          <p>
+            &copy; {new Date().getFullYear()} Reactify. All rights reserved.
+          </p>
+        </div>
       </div>
     </footer>
   );

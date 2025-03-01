@@ -1,132 +1,106 @@
-import React from 'react';
+import React from "react";
+import { motion } from "framer-motion";
 
-const Privacy = () => {
- return (
-     <div
-       style={{
-        
-       }}
-     >
-       <div className="bg-[rgb(202,0,42)] h-[10rem] w-full">
-         <h1 className="ml-[18rem] font-bold text-[2rem] text-white">Terms & Condition</h1>
-       </div>
-       <div className="flex">
-         <div className="w-[70%] bg-white p-[35px] shadow-[0px_0px_20px_0px_rgba(0,0,0,0.09)] transition-all duration-300 -mt-[70px] mr-[40px] mb-[40px] ml-[2rem]">
-           <span>Last Updated: January 2025</span>
-           <br />
-           <br />
-           <span className="font-bold text-[rgb(202,0,42)]">1. Introductions
-           </span>
-           <br />
-           <span className="mt-[4rem]">
-           Welcome to VibeVision, the YouTube Comment Analyzer. We value your privacy and are committed to protecting your personal information. This privacy policy explains how we collect, use, and protect your information when you use our service.
-           </span>
-           <br />
-           <br />
-           <span className="font-bold text-[rgb(202,0,42)]">2. Information We Collect
-           e</span>
-           <br />
-           <span>
-           We collect information that you provide to us directly, such as:
-<br></br>
--Your email address when you sign up for an account.
-<br></br>
--Your YouTube comments and other content you submit via the platform.
-<br></br>
-We may also automatically collect information such as:
-<br></br>
--Your IP address and device information for analytics and troubleshooting.
-<br></br>
--Usage data to improve our service, including what features you use and how you interact with the site.
-           </span>
-           
-           <br />
-           <br />
-           <span className="font-bold text-[rgb(202,0,42)]">3. How We Use Your Information
-           </span>
-           <br />
-           <span>
-           We use the information we collect to:
-<br></br>
--Provide and improve our services.
-<br></br>
--Communicate with you regarding your account or inquiries.
-<br></br>
--Enhance the user experience by analyzing your usage patterns.
+const PrivacyPolicy = () => {
+  return (
+    <section className="bg-[#E5E7EB] py-16">
+      <div className="max-w-screen-lg mx-auto px-6 md:px-12">
+        {/* Heading with Animation */}
+        <motion.h2
+          className="text-center text-4xl font-bold text-[#1E3A8A] mb-10"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          Privacy <span className="text-[#14B8A6]">Policy</span>
+        </motion.h2>
 
-           </span>
-           <br />
-           <br />
-           <span className="font-bold text-[rgb(202,0,42)]">4. Sharing Your Information
-           </span>
-           <br />
-           <span>
-           We do not sell, trade, or rent your personal information to third parties. However, we may share your information with trusted third parties in the following circumstances:
+        {/* Content Wrapper */}
+        <motion.div
+          className="bg-white p-6 md:p-10 rounded-lg shadow-lg"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <p className="text-gray-700 leading-relaxed">
+            At <b>Reactify</b>, we prioritize your privacy. This Privacy Policy
+            outlines the types of personal information we collect, how we use
+            it, and the steps we take to protect your data.
+          </p>
 
--To comply with legal obligations, such as responding to a subpoena or court order.
--If we are involved in a merger, acquisition, or sale of assets, your information may be transferred as part of that transaction.
-           </span>
-           <br />
-           <br />
-           <span className="font-bold text-[rgb(202,0,42)]">5. Data Retention
-           </span>
-           <br />
-           <span>
-            
-We retain your personal data for as long as necessary to fulfill the purposes outlined in this privacy policy. If you wish to delete your account, you may contact us, and we will delete your personal data in accordance with applicable laws.
+          {/* Section 1 */}
+          <div className="mt-6">
+            <h3 className="text-2xl font-semibold text-[#1E3A8A] mb-2">
+              1. Information We Collect
+            </h3>
+            <p className="text-gray-700">
+              We collect data such as email addresses, YouTube video URLs, and
+              user interaction details for sentiment analysis purposes.
+            </p>
+          </div>
 
+          {/* Section 2 */}
+          <div className="mt-6">
+            <h3 className="text-2xl font-semibold text-[#1E3A8A] mb-2">
+              2. How We Use Your Information
+            </h3>
+            <ul className="list-disc pl-5 text-gray-700">
+              <li>
+                To provide accurate sentiment analysis for YouTube comments.
+              </li>
+              <li>To improve our services and develop new features.</li>
+              <li>To ensure a secure and user-friendly experience.</li>
+            </ul>
+          </div>
 
-           </span>
-           <br />
-           <br />
-           <span className="font-bold text-[rgb(202,0,42)]">6. Data Security
-           </span>
-           <br />
-           <span>
-           We take reasonable measures to protect your personal information, including using encryption and secure servers. However, no method of data transmission over the internet is completely secure, and we cannot guarantee absolute security.
-           </span>
-           <br />
-           <br />
-           <span className="font-bold text-[rgb(202,0,42)]">7. Your Rights
-           </span>
-           <br />
-           <span>
-           Depending on your location, you may have the right to:
+          {/* Section 3 */}
+          <div className="mt-6">
+            <h3 className="text-2xl font-semibold text-[#1E3A8A] mb-2">
+              3. Data Protection
+            </h3>
+            <p className="text-gray-700">
+              We implement strong security measures to safeguard your
+              information from unauthorized access or misuse.
+            </p>
+          </div>
 
--Access the personal information we hold about you.
--Request the correction or deletion of your personal data.
--Withdraw your consent to the processing of your data .
-To exercise any of these rights, please contact us using the information provided below.
-           </span>
-           <br />
-           <br />
-           <span className="font-bold text-[rgb(202,0,42)]">8. Third-Party Links
-           </span>
-           <br />
-           <span>
-           Our service may contain links to third-party websites. We are not responsible for the privacy practices or content of these external sites. Please review their privacy policies before submitting any personal data to these sites.
-           </span>
-           <br />
-           <br />
-           <span className="font-bold text-[rgb(202,0,42)]">9. Changes to This Privacy Policy
-           </span>
-           <br />
-           <span>
-           We may update this privacy policy from time to time. Any changes will be posted on this page with the updated date. We encourage you to review this privacy policy periodically to stay informed about how we are protecting your information.
-           </span>
-           <br />
-           <br />
-           <span className="font-bold text-[rgb(202,0,42)]">10. Contact Us</span>
-           <br />
-           <span>
-           If you have any questions about this privacy policy or our practices, please contact us at  
-           </span>
-          <span className='underline'> smartfilter12@gmail.com.</span>
-         </div>
-        
-       </div>
-     </div>
-   );
-}
+          {/* Section 4 */}
+          <div className="mt-6">
+            <h3 className="text-2xl font-semibold text-[#1E3A8A] mb-2">
+              4. Third-Party Services
+            </h3>
+            <p className="text-gray-700">
+              We may integrate with third-party services (e.g., YouTube API) but
+              ensure that your data is handled securely.
+            </p>
+          </div>
 
-export default Privacy;
+          {/* Section 5 */}
+          <div className="mt-6">
+            <h3 className="text-2xl font-semibold text-[#1E3A8A] mb-2">
+              5. Your Choices & Rights
+            </h3>
+            <p className="text-gray-700">
+              You can request to delete your data, update preferences, or opt
+              out of data collection at any time.
+            </p>
+          </div>
+
+          {/* CTA Button */}
+          <div className="text-center mt-8">
+            <motion.a
+              href="/contactus"
+              className="bg-[#14B8A6] text-white px-6 py-3 rounded-lg font-medium shadow-md hover:bg-[#0F766E] transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Contact Us for Privacy Concerns
+            </motion.a>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+export default PrivacyPolicy;

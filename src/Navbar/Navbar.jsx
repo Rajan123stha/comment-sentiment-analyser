@@ -1,139 +1,123 @@
 import React, { useState } from "react";
 import { CgProfile } from "react-icons/cg";
+import { FiMenu, FiX } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import { useAuth } from "./../AuthContext"; // Import your AuthContext
-import "./Navbar.css";
-import Logo from "../assets/mlogo.png";
+import { useAuth } from "./../AuthContext";
+import Logo from "../assets/logo.png";
 
 function Navbar() {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown
-  const { user, admin, logout } = useAuth(); // Get user and admin context or state
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, admin, logout } = useAuth();
 
   const handleProfileClick = () => {
-    setIsOverlayOpen((prev) => !prev); // Toggle the overlay visibility
-  };
-
-  // Hover event handlers
-  const handleDropdownEnter = () => {
-    setIsDropdownOpen(true); // Show dropdown on hover
-  };
-
-  const handleDropdownLeave = () => {
-    setIsDropdownOpen(false); // Hide dropdown when mouse leaves
-  };
-
-  const handleOverlayClose = () => {
-    setIsOverlayOpen(false); // Close overlay
+    setIsOverlayOpen((prev) => !prev);
   };
 
   return (
-    <div className="flex justify-between items-center bg-slate-50 border-b border-gray-300 p-3 sticky top-0 z-50">
-      {/* Left Section: Logo and navigation buttons */}
-      <div className="flex items-center space-x-3">
-        {/* Logo linking to HomeScreen */}
-        <nav>
-          <Link to="/">
-            <img src={Logo} className="h-12" alt="logo" />
+    <nav className="bg-slate-100 border-b border-gray-300 p-4 sticky top-0 z-50 w-full">
+      <div className="container mx-auto flex justify-between items-center">
+        {/* Left Section: Logo */}
+        <Link to="/">
+          <img src={Logo} className="h-10" alt="Reactify Logo" />
+        </Link>
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex space-x-6">
+          <Link to="/commentanalyzer" className="text-black font-medium">
+            Analyze
           </Link>
-        </nav>
+          <Link to="/aboutus" className="text-black font-medium">
+            About us
+          </Link>
+          <Link to="/contactus" className="text-black font-medium">
+            Contact us
+          </Link>
+        </div>
 
-        {/* Analysis Dropdown */}
-        <nav>
-          <div
-            className="relative"
-            onMouseEnter={handleDropdownEnter} // Show dropdown on hover
-            onMouseLeave={handleDropdownLeave} // Hide dropdown when mouse leaves
-          >
-            <span className="text-black font-medium text-[1rem] py-1 px-3 rounded inline-block">
-              Analysis
-            </span>
-            {isDropdownOpen && (
-              <div className="absolute bg-white shadow-lg rounded mt-0 w-48 z-60">
-                <ul className="list-none p-0">
-                  <li>
-                    <Link
-                      to="/twitteranalyer"
-                      className="block font-medium py-2 px-3 text-gray-800 hover:bg-gray-200"
+        {/* Right Section: Profile/Login & Hamburger */}
+        <div className="flex items-center space-x-4">
+          {(user || admin) && (
+            <div className="relative">
+              <CgProfile
+                className="h-6 w-6 cursor-pointer"
+                onClick={handleProfileClick}
+              />
+              {isOverlayOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded shadow-lg z-50">
+                  <div className="p-2 text-center">
+                    <button
+                      className="w-full bg-gray-200 text-black rounded hover:bg-gray-300 p-2 mb-1"
+                      onClick={logout}
                     >
-                      Twitter Comment
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/commentanalyzer"
-                      className="block py-2 font-medium px-3 text-gray-800 hover:bg-gray-200"
-                    >
-                      YouTube Comment
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
-        </nav>
-
-        {/* Spam Detection */}
-        <Link
-          to="/spamdetection"
-          className="bg-transparent text-black ml-2 rounded font-medium text-[0.9rem] px-3 py-1"
-        >
-          Spam Detection
-        </Link>
-        <Link
-          to="/aboutus"
-          className="bg-transparent text-black rounded font-medium text-[0.9rem] px-3 py-1"
-        >
-          About us
-        </Link>
-      </div>
-
-      {/* Profile Section */}
-      <div className="flex items-center">
-        {(user || admin) && (
-          <>
-            <CgProfile
-              className="h-6 w-6 mr-3 cursor-pointer"
-              onClick={handleProfileClick} // Open/close overlay on click
-            />
-            {isOverlayOpen && (
-              <div
-                className="absolute right-0 top-full mt-1 w-48 bg-white border border-gray-300 rounded shadow-lg z-50"
-                onClick={handleOverlayClose} // Close overlay when clicked outside
-              >
-                <div className="p-2 text-center">
-                  <button
-                    className="w-full bg-gray-200 text-black rounded hover:bg-gray-300 p-2 mb-1"
-                    onClick={logout}
-                  >
-                    Logout
-                  </button>
-                  <Link to={admin ? "/admin/profile" : "/profile"}>
-                    <button className="w-full bg-teal-500 text-white rounded hover:bg-teal-600 p-2">
-                      Profile
+                      Logout
                     </button>
-                  </Link>
+                    <Link to={admin ? "/admin/profile" : "/profile"}>
+                      <button className="w-full bg-teal-500 text-white rounded hover:bg-teal-600 p-2">
+                        Profile
+                      </button>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            )}
-          </>
-        )}
+              )}
+            </div>
+          )}
 
-        {/* Login Button if not logged in */}
-        {!user && !admin && (
-          <Link
-            to={window.location.pathname.includes("/admin") ? "/admin/login" : "/login"}
-          >
-            <button
-              className="bg-green-500 text-white rounded hover:bg-green-600 px-3 py-1"
-              style={{ backgroundColor: "#CA002A" }}
+          {!user && !admin && (
+            <Link
+              to={
+                window.location.pathname.includes("/admin")
+                  ? "/admin/login"
+                  : "/login"
+              }
             >
-              Login
-            </button>
-          </Link>
-        )}
+              <button className="bg-[#1E3A8A] text-white rounded px-4 py-2 hover:bg-blue-800">
+                Login
+              </button>
+            </Link>
+          )}
+
+          {/* Mobile Menu Toggle */}
+          <button
+            className="md:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? (
+              <FiX className="h-6 w-6" />
+            ) : (
+              <FiMenu className="h-6 w-6" />
+            )}
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-300 p-4 absolute top-[60px] left-0 w-full shadow-md">
+          <Link
+            to="/commentanalyzer"
+            className="block py-2 text-black font-medium"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Analyze
+          </Link>
+          <Link
+            to="/aboutus"
+            className="block py-2 text-black font-medium"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            About us
+          </Link>
+          <Link
+            to="/contactus"
+            className="block py-2 text-black font-medium"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Contact us
+          </Link>
+        </div>
+      )}
+    </nav>
   );
 }
 

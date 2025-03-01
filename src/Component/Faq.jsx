@@ -1,173 +1,93 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 
 const FAQPage = () => {
-  // State to manage active FAQ
-  const [activeFAQ, setActiveFAQ] = useState(null);
+  const [openIndex, setOpenIndex] = useState(null);
 
-  // Function to toggle the active FAQ
   const toggleFAQ = (index) => {
-    if (activeFAQ === index) {
-      setActiveFAQ(null); // Close if the same FAQ is clicked
-    } else {
-      setActiveFAQ(index); // Open the selected FAQ
-    }
+    setOpenIndex(index === openIndex ? null : index);
   };
 
+  // Dummy FAQ Data
+  const faqs = [
+    {
+      question: "What is Reactify?",
+      answer:
+        "Reactify is a cutting-edge platform that provides sentiment analysis for YouTube comments, helping users gain insights into audience opinions.",
+    },
+    {
+      question: "How does the sentiment analysis work?",
+      answer:
+        "We use advanced AI models to analyze comments, categorizing them as positive, negative, or neutral based on their content.",
+    },
+    {
+      question: "Is Reactify free to use?",
+      answer:
+        "Yes, Reactify offers a free plan with limited features. We also have premium plans for advanced analytics.",
+    },
+    {
+      question: "Can I use Reactify for my YouTube channel?",
+      answer:
+        "Absolutely! Reactify helps YouTube creators understand audience engagement and improve content strategy.",
+    },
+  ];
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4 text-[rgb(202,0,42)] ml-[19rem]">Frequently Asked Questions (FAQ)</h1>
-
-      {/* FAQ 1 */}
-      <div className="mb-4">
-        <button
-          className="w-full text-left text-xl font-semibold py-2 px-4 bg-gray-200 rounded-lg focus:outline-none"
-          onClick={() => toggleFAQ(0)}
+    <section className="bg-[#E5E7EB] py-16">
+      <div className="max-w-screen-lg mx-auto px-6 md:px-12">
+        {/* Heading with Animation */}
+        <motion.h2
+          className="text-center text-4xl font-bold text-[#1E3A8A] mb-10"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
         >
-          What is SmartFilter?
-        </button>
-        {activeFAQ === 0 && (
-          <div className="mt-2 px-4 text-gray-700">
-            SmartFilter is an advanced tool designed to analyze and extract valuable insights from social media interactions. By leveraging sentiment analysis, SmartFilter categorizes comments and messages from platforms like YouTube and Twitter into positive, negative, or neutral, helping businesses and individuals make data-driven decisions.
-          </div>
-        )}
-      </div>
+          Frequently Asked <span className="text-[#14B8A6]">Questions</span>
+        </motion.h2>
 
-      {/* FAQ 2 */}
-      <div className="mb-4">
-        <button
-          className="w-full text-left text-xl font-semibold py-2 px-4 bg-gray-200 rounded-lg focus:outline-none"
-          onClick={() => toggleFAQ(1)}
-        >
-          How does SmartFilter work?
-        </button>
-        {activeFAQ === 1 && (
-          <div className="mt-2 px-4 text-gray-700">
-            SmartFilter uses AI-powered sentiment analysis to scan and categorize the vast volume of comments, reactions, and messages across platforms like YouTube and Twitter. It processes the text data and classifies it based on sentiment, offering insights into public perception and trends.
-          </div>
-        )}
-      </div>
+        {/* FAQ Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {faqs.map((faq, index) => (
+            <motion.div
+              key={index}
+              className="bg-white border border-gray-200 rounded-lg shadow-md p-5"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              {/* FAQ Header */}
+              <div className="flex justify-between items-center">
+                <button
+                  className="text-lg font-medium text-left w-full"
+                  onClick={() => toggleFAQ(index)}
+                >
+                  {faq.question}
+                </button>
+                <button
+                  onClick={() => toggleFAQ(index)}
+                  className="text-xl font-bold ml-2 text-[#1E3A8A]"
+                >
+                  {openIndex === index ? "−" : "+"}
+                </button>
+              </div>
 
-      {/* FAQ 3 */}
-      <div className="mb-4">
-        <button
-          className="w-full text-left text-xl font-semibold py-2 px-4 bg-gray-200 rounded-lg focus:outline-none"
-          onClick={() => toggleFAQ(2)}
-        >
-          What platforms does SmartFilter support?
-        </button>
-        {activeFAQ === 2 && (
-          <div className="mt-2 px-4 text-gray-700">
-            Currently, SmartFilter supports YouTube and Twitter. We are working to expand the platform compatibility in the future.
-          </div>
-        )}
+              {/* FAQ Answer (Expandable) */}
+              {openIndex === index && (
+                <motion.div
+                  className="mt-3 text-gray-700"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {faq.answer}
+                </motion.div>
+              )}
+            </motion.div>
+          ))}
+        </div>
       </div>
-
-      {/* FAQ 4 */}
-      <div className="mb-4">
-        <button
-          className="w-full text-left text-xl font-semibold py-2 px-4 bg-gray-200 rounded-lg focus:outline-none"
-          onClick={() => toggleFAQ(3)}
-        >
-          Do I need an account to use SmartFilter?
-        </button>
-        {activeFAQ === 3 && (
-          <div className="mt-2 px-4 text-gray-700">
-            Yes, to access all of SmartFilter's features, you need to create an account. This helps us provide a personalized experience and securely store your analysis results.
-          </div>
-        )}
-      </div>
-
-      {/* FAQ 5 */}
-      <div className="mb-4">
-        <button
-          className="w-full text-left text-xl font-semibold py-2 px-4 bg-gray-200 rounded-lg focus:outline-none"
-          onClick={() => toggleFAQ(4)}
-        >
-          How can I analyze comments from a specific video or post?
-        </button>
-        {activeFAQ === 4 && (
-          <div className="mt-2 px-4 text-gray-700">
-            Simply log in to your account, input the URL of the YouTube video or Twitter post you wish to analyze, and SmartFilter will process the comments for sentiment analysis.
-          </div>
-        )}
-      </div>
-
-      {/* FAQ 6 */}
-      <div className="mb-4">
-        <button
-          className="w-full text-left text-xl font-semibold py-2 px-4 bg-gray-200 rounded-lg focus:outline-none"
-          onClick={() => toggleFAQ(5)}
-        >
-          How accurate is SmartFilter's sentiment analysis?
-        </button>
-        {activeFAQ === 5 && (
-          <div className="mt-2 px-4 text-gray-700">
-            SmartFilter's sentiment analysis is powered by AI algorithms that provide highly accurate sentiment categorizations. While it is generally reliable, the AI may occasionally misinterpret certain comments, especially if they contain sarcasm or complex expressions.
-          </div>
-        )}
-      </div>
-
-      {/* FAQ 7 */}
-      <div className="mb-4">
-        <button
-          className="w-full text-left text-xl font-semibold py-2 px-4 bg-gray-200 rounded-lg focus:outline-none"
-          onClick={() => toggleFAQ(6)}
-        >
-          Can I use SmartFilter for other social media platforms?
-        </button>
-        {activeFAQ === 6 && (
-          <div className="mt-2 px-4 text-gray-700">
-            At the moment, SmartFilter is designed specifically for YouTube and Twitter. However, we plan to integrate more platforms in the future to provide a broader analysis scope.
-          </div>
-        )}
-      </div>
-
-      {/* FAQ 8 */}
-      <div className="mb-4">
-        <button
-          className="w-full text-left text-xl font-semibold py-2 px-4 bg-gray-200 rounded-lg focus:outline-none"
-          onClick={() => toggleFAQ(7)}
-        >
-          How can SmartFilter help businesses and individuals?
-        </button>
-        {activeFAQ === 7 && (
-          <div className="mt-2 px-4 text-gray-700">
-            SmartFilter provides valuable insights into public sentiment, enabling businesses to track brand perception, evaluate audience reactions, and optimize their marketing strategies. Individuals can use it to gauge the overall mood around a particular topic or trend.
-          </div>
-        )}
-      </div>
-
-      {/* FAQ 9 */}
-      <div className="mb-4">
-        <button
-          className="w-full text-left text-xl font-semibold py-2 px-4 bg-gray-200 rounded-lg focus:outline-none"
-          onClick={() => toggleFAQ(8)}
-        >
-          Is SmartFilter free to use?
-        </button>
-        {activeFAQ === 8 && (
-          <div className="mt-2 px-4 text-gray-700">
-            SmartFilter offers both free and paid versions. The free version provides access to basic sentiment analysis features, while the paid version unlocks advanced functionalities like detailed analytics and multi-platform support.
-          </div>
-        )}
-      </div>
-
-      {/* FAQ 10 */}
-      <div className="mb-4">
-        <button
-          className="w-full text-left text-xl font-semibold py-2 px-4 bg-gray-200 rounded-lg focus:outline-none"
-          onClick={() => toggleFAQ(9)}
-        >
-          How can I contact SmartFilter support?
-        </button>
-        {activeFAQ === 9 && (
-          <div className="mt-2 px-4 text-gray-700">
-            If you have any issues or questions, you can reach out to our support team by emailing [support email address] or using the contact form on our website.
-          </div>
-        )}
-      </div>
-    </div>
+    </section>
   );
-}
+};
 
 export default FAQPage;

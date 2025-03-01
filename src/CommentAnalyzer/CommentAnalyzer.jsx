@@ -145,8 +145,7 @@ const CommentAnalyzer = () => {
       <h2 className="text-xl font-bold">{sentiment} Comments (Top 30%)</h2>
       <table className="min-w-full bg-white border border-gray-300">
         <thead>
-        <tr style={{ backgroundColor: '#CA002A' }}>
-          
+          <tr style={{ backgroundColor: "#CA002A" }}>
             <th className="border px-4 py-2 bg-gray-200">SN</th>
             <th className="border px-4 py-2 bg-gray-200">Comments</th>
             <th className="border px-4 py-2 bg-gray-200">Confidence (%)</th>
@@ -224,7 +223,7 @@ const CommentAnalyzer = () => {
         />
         <button
           onClick={fetchComments}
-          className="p-2 bg-green-500 text-white rounded hover:bg-green-600"
+          className="p-2 bg-[#14B8A6] text-white rounded hover:bg-green-600"
           disabled={loading || (!user && !admin)}
         >
           {loading ? "Analysing..." : "Analyse Comments"}
@@ -302,7 +301,7 @@ const CommentAnalyzer = () => {
       <div className=" mt-12  flex justify-center">
         <button
           onClick={downloadCSV}
-          className="p-2 bg-green-500 text-white  hover:bg-green-600"
+          className="p-2 bg-[#14B8A6] text-white  hover:bg-green-600"
           disabled={
             loading ||
             (!positiveComments.length &&
@@ -315,9 +314,9 @@ const CommentAnalyzer = () => {
       </div>
       {showScrollTop && (
         <button
-        style={{backgroundColor:"red"}}
-          onClick= {scrollToTop}
-          className="fixed bottom-20 left-6 p-3 bg-green-500 text-white  hover:bg-green-600  rounded-full shadow-lg  transition duration-200"
+          style={{ backgroundColor: "red" }}
+          onClick={scrollToTop}
+          className="fixed bottom-20 left-6 p-3 bg-[#14B8A6] text-white  hover:bg-green-600  rounded-full shadow-lg  transition duration-200"
           aria-label="Scroll to top"
         >
           ↑

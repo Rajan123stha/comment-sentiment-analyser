@@ -1,45 +1,72 @@
 import React from "react";
-import about from '../assets/about.png';
-import aboutus from "../assets/aboutus.png"
-function AboutUs() {
-  return (
-    <div   className=""
-    style={{
-       // Lighter red with 60% opacity
-    }}>
-      <div className="bg-[rgb(202,0,42)] h-[10rem] w-full">
-        <span></span>
-        <br></br>
-        <h1 className=" ml-[50rem]  font-bold text-[2rem] text-white ">About Us</h1>
-        </div>
-        <div className="flex">
-            <img src={about} alt="about" className="h-[25rem] mt-[8rem] w-[30rem] ml-[3rem] " />
-            <div className="w-[50%] bg-white p-[35px] shadow-[0px_0px_20px_0px_rgba(0,0,0,0.09)] transition-all duration-300 -mt-[70px] mr-[40px] mb-[40px] ml-[2rem] p-[40px]">
-              <span>Overview</span><br></br><br></br>
-            <span className=" mt-[4rem] ">With the rise of social media platforms like YouTube and Twitter, these spaces have transformed into 
-              hubs for sharing ideas, connecting with audiences, and fostering conversations. Millions of users leave comments daily, 
-              expressing their thoughts and opinions, creating a wealth of valuable insights. However, the sheer volume of interactions makes
-               it nearly impossible to manually analyze and extract meaning from the data. That’s where we come in. </span>
-               <br></br>
-               <br></br>
-               <span>At SmartFilter, we’re committed to simplifying the way comments are analyzed. Our cutting-edge system leverages 
-                advanced algorithms to predict sentiment—whether it’s positive, negative, or neutral—giving users a deeper understanding
-                 of audience emotions. By providing actionable insights, we empower businesses, creators, and individuals to connect with
-                  their communities on a more meaningful level.</span>
-                 <br></br>
-                 <br></br> <span>In addition to sentiment analysis, our platform ensures
-                   that spam is detected and filtered out, promoting a clean and constructive environment for engagement. With SmartFilter, 
-                   we aim to transform the overwhelming influx of comments into a manageable and insightful resource, helping you foster stronger
-                    connections and create impactful conversations across social platforms.
-</span>
+import { motion } from "framer-motion";
+import about from "../assets/about.webp";
 
-<div className="  ">   
-           <img src={aboutus} alt="about" className="h-[35rem]  w-[40rem]   " />
-</div>
-</div>
+const AboutUs = () => {
+  return (
+    <section className="bg-[#E5E7EB] py-16">
+      <div className="max-w-screen-xl mx-auto px-6 md:px-12">
+        {/* Heading with Animation */}
+        <motion.h2
+          className="text-center text-4xl font-bold text-[#1E3A8A] mb-12"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          About <span className="text-[#14B8A6]">Reactify</span>
+        </motion.h2>
+
+        {/* Content Section */}
+        <div className="flex flex-col md:flex-row items-center">
+          {/* Left: Image Section */}
+          <motion.div
+            className="md:w-1/2"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <img
+              src={about}
+              alt="About Reactify"
+              className="w-full rounded-2xl shadow-lg"
+            />
+          </motion.div>
+
+          {/* Right: Text Section */}
+          <motion.div
+            className="md:w-1/2 mt-8 md:mt-0 md:pl-12"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h3 className="text-2xl font-semibold text-[#1E3A8A] mb-4">
+              Analyze YouTube Comments Smarter!
+            </h3>
+            <p className="text-gray-700 mb-4 leading-relaxed">
+              Reactify is an AI-powered platform that allows users to analyze
+              YouTube comments for sentiment, download results in CSV format,
+              and extract all comments at once.
+            </p>
+            <p className="text-gray-700 mb-6 leading-relaxed">
+              Our cutting-edge technology makes comment analysis effortless,
+              helping content creators and marketers make **data-driven**
+              decisions with ease.
+            </p>
+
+            {/* CTA Button */}
+            <motion.a
+              href="/features"
+              className="bg-[#14B8A6] text-white px-6 py-3 rounded-lg font-medium shadow-md hover:bg-[#0F766E] transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Learn More
+            </motion.a>
+          </motion.div>
         </div>
-    </div>
+      </div>
+    </section>
   );
-}
+};
 
 export default AboutUs;

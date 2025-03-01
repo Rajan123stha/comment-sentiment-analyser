@@ -30,10 +30,11 @@ if not youtube_API_key or not twitter_bearer_token:
 
 # Initialize Flask app and allow CORS
 app = Flask(__name__)
-CORS(app)  # Allow all origins
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+
 
 # App configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://user:12345@localhost/CommentAnalyzer'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/comment-analyser'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy with the app

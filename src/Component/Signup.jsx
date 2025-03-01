@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
-import video from "../assets/signup.mp4";
+import signup from "../assets/signup.webp";
 
 const Signup = () => {
   const location = useLocation(); // Access location for passed state
@@ -33,9 +33,12 @@ const Signup = () => {
     }
 
     // Password validation (min 8 characters, 1 number, 1 special character)
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(password)) {
-      setError("Password must be at least 8 characters long and contain at least one letter, one number, and one special character.");
+      setError(
+        "Password must be at least 8 characters long and contain at least one letter, one number, and one special character."
+      );
       return;
     }
 
@@ -71,22 +74,23 @@ const Signup = () => {
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gray-100 p-5">
       {/* Background Video */}
-      <video
-        className="w-[30rem] h-[31.8rem] max-w-[98%] object-cover"
-        src={video}
-        autoPlay
-        loop
-        muted
-      >
-        Your browser does not support the video tag.
-      </video>
+      <img
+        src={signup}
+        alt=" signup"
+        className=" mt-[2.5rem]  object-cover shadow-md w-[30rem] h-[31.8rem] max-w-[98%] hidden lg:block "
+      />
 
       {/* Container for the form */}
       <div className="relative flex flex-col items-center justify-center w-full max-w-md bg-white p-8 border border-gray-300 shadow-md z-10">
-        <h2 className="text-2xl font-bold text-[2rem] text-[rgb(202,0,42)] mb-6">Signup</h2>
+        <h2 className="text-2xl font-bold text-[2rem] text-[#1E3A8A] mb-6">
+          Signup
+        </h2>
         <form className="w-full" onSubmit={handleSignup}>
           <div className="mb-5">
-            <label htmlFor="username" className="block mb-2 font-montserrat text-gray-700 text-sm">
+            <label
+              htmlFor="username"
+              className="block mb-2 font-montserrat text-gray-700 text-sm"
+            >
               Username
             </label>
             <input
@@ -100,7 +104,10 @@ const Signup = () => {
             />
           </div>
           <div className="mb-5">
-            <label htmlFor="email" className="block mb-2 font-montserrat text-gray-700 text-sm">
+            <label
+              htmlFor="email"
+              className="block mb-2 font-montserrat text-gray-700 text-sm"
+            >
               Email
             </label>
             <input
@@ -114,7 +121,10 @@ const Signup = () => {
             />
           </div>
           <div className="mb-6 relative">
-            <label htmlFor="password" className="block mb-2 font-montserrat text-gray-700 text-sm">
+            <label
+              htmlFor="password"
+              className="block mb-2 font-montserrat text-gray-700 text-sm"
+            >
               Password
             </label>
             <input
@@ -138,16 +148,21 @@ const Signup = () => {
             </span>
           </div>
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-          {message && <p className="text-green-500 text-center mb-4">{message}</p>}
+          {message && (
+            <p className="text-green-500 text-center mb-4">{message}</p>
+          )}
           <button
             type="submit"
-            className="w-full p-3 bg-[rgb(202,0,42)] text-white rounded-md hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            className="w-full p-3 bg-[#14B8A6] text-white rounded-md hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           >
             Signup
           </button>
           <p className="text-center mt-6 text-gray-600 text-sm">
             Already have an account?{" "}
-            <Link to="/login" className="text-[rgb(202,0,42)] hover:text-green-500 hover:underline">
+            <Link
+              to="/login"
+              className="text-[#1E3A8A] hover:text-green-500 hover:underline"
+            >
               Login
             </Link>
           </p>

@@ -9,7 +9,6 @@ import Footer from "./Component/Footer";
 import AboutUs from "./Component/AboutUs";
 import Faq from "./Component/Faq";
 import CommentAnalyzer from "./CommentAnalyzer/CommentAnalyzer";
-import TwitterAnalyzer from "./TwitterAnalyzer/TwitterAnalyzer";
 import SpamDetection from "./SpamDetection/SpamDetection";
 import Profile from "./Component/Profile";
 import Terms from "./Component/Terms";
@@ -18,6 +17,7 @@ import AdminLogin from "./Admin/AdminLogin";
 import AdminSignup from "./Admin/AdminSignup";
 import AdminProfile from "./Admin/AdminProfile";
 import HomeScreen from "./Component/Homescreen"; // Correct import for HomeScreen
+import ContactUs from "./Component/ContactUs";
 
 function App() {
   const [videoUrl, setVideoUrl] = useState("");
@@ -31,15 +31,16 @@ function App() {
       <div className="flex-grow">
         <Routes>
           {/* Default route to HomeScreen */}
-          <Route path="/" element={<HomeScreen />} /> {/* Set HomeScreen as default */}
-          
+          <Route path="/" element={<HomeScreen />} />{" "}
+          {/* Set HomeScreen as default */}
           {/* Other routes */}
           <Route path="/commentanalyzer" element={<CommentAnalyzer />} />
-          <Route path="/twitteranalyer" element={<TwitterAnalyzer />} />
+          {/* <Route path="/twitteranalyer" element={<TwitterAnalyzer />} /> */}
           <Route path="/spamdetection" element={<SpamDetection />} />
           <Route path="/login" element={<Login />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/faq" element={<Faq />} />
+          <Route path="/contactus" element={<ContactUs />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/signup" element={<Signup />} />
