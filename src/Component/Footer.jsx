@@ -1,6 +1,7 @@
 import React from "react";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 import logo from "../assets/logo.png";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -16,30 +17,30 @@ const Footer = () => {
 
         {/* Navigation Links Section */}
         <div className="flex justify-center md:justify-between space-x-6 mb-4 text-sm">
-          <a
-            href="/aboutus"
+          <Link
+            to="/aboutus"
             className="hover:text-[#14B8A6] transition duration-300"
           >
             About Us
-          </a>
-          <a
-            href="/contactus"
+          </Link>
+          <Link
+            to="/contactus"
             className="hover:text-[#14B8A6] transition duration-300"
           >
             Contact Us
-          </a>
-          <a
-            href="/privacy"
+          </Link>
+          <Link
+            to="/privacy"
             className="hover:text-[#14B8A6] transition duration-300"
           >
             Privacy Policy
-          </a>
-          <a
-            href="/faq"
+          </Link>
+          <Link
+            to="/faq"
             className="hover:text-[#14B8A6] transition duration-300"
           >
             FAQs
-          </a>
+          </Link>
         </div>
 
         {/* Social Media Icons Section */}
