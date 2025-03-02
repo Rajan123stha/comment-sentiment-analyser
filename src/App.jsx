@@ -3,21 +3,21 @@ import Navbar from "./Navbar/Navbar";
 import axios from "axios";
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Signup from "./Component/Signup";
-import Login from "./Component/Login";
+import Signup from "./Pages/Signup";
+import Login from "./Pages/Login";
 import Footer from "./Component/Footer";
-import AboutUs from "./Component/AboutUs";
-import Faq from "./Component/Faq";
+import AboutUs from "./Pages/AboutUs";
+import Faq from "./Pages/Faq";
 import CommentAnalyzer from "./CommentAnalyzer/CommentAnalyzer";
 import SpamDetection from "./SpamDetection/SpamDetection";
 import Profile from "./Component/Profile";
-import Terms from "./Component/Terms";
-import Privacy from "./Component/Privacy";
+import Terms from "./Pages/Terms";
+import Privacy from "./Pages/Privacy";
 import AdminLogin from "./Admin/AdminLogin";
 import AdminSignup from "./Admin/AdminSignup";
 import AdminProfile from "./Admin/AdminProfile";
-import HomeScreen from "./Component/Homescreen"; // Correct import for HomeScreen
-import ContactUs from "./Component/ContactUs";
+import HomeScreen from "./Pages/Homescreen"; // Correct import for HomeScreen
+import ContactUs from "./Pages/ContactUs";
 
 function App() {
   const [videoUrl, setVideoUrl] = useState("");

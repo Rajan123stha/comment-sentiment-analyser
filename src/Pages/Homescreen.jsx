@@ -1,14 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import homeImage from "../assets/hero.png";
-import video from "../assets/vid.mp4";
-import meaning from "../assets/meaning.png";
-import positive from "../assets/positive.png";
-import identify from "../assets/identify.png";
-import { Link } from "react-router-dom";
+
 import HeroSection from "./HeroSection";
-import DescriptionSection from "./Description";
-import TestimonialsSection from "./Testimonials";
+import DescriptionSection from "../Component/Description";
+import TestimonialsSection from "../Component/Testimonials";
 
 function HomeScreen() {
   const [email, setEmail] = useState("");
