@@ -1,0 +1,9 @@
+google-api-python-client
+nltk
+Flask-Cors
+Flask-SQLAlchemy
+PyMySQL
+pandas
+joblib
+emoji
+flask

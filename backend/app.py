@@ -30,11 +30,14 @@ if not youtube_API_key or not twitter_bearer_token:
 
 # Initialize Flask app and allow CORS
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/*": {"origins": ["http://localhost:5173", "https://proud-beach-0f5f24200.6.azurestaticapps.net"]}}) 
 
 
 # App configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/comment-analyser'
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    'mysql+pymysql://adminuser:rajan123@@mydatabase.mysql.database.azure.com:3306/mydatabase?ssl_mode=DISABLED' 
+)
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy with the app
@@ -317,5 +320,6 @@ def detect_spam():
 def index():
     return "API for YouTube Comment Analysis is running."
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# Make sure this is at the bottom
+def get_app():
+    return app

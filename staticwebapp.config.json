@@ -5,22 +5,17 @@
   },
   "routes": [
     {
-      "route": "/commentanalyzer/*",
+      "route": "/resources/*",
       "serve": "/index.html",
       "statusCode": 200
     },
     {
-      "route": "/login",
+      "route": "/about",
       "serve": "/index.html",
       "statusCode": 200
     },
     {
-      "route": "/contactus",
-      "serve": "/index.html",
-      "statusCode": 200
-    },
-     {
-      "route": "/aboutus",
+      "route": "/admin/*",
       "serve": "/index.html",
       "statusCode": 200
     },
