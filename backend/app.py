@@ -8,318 +8,248 @@ import pandas as pd
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify
-from auth import auth  # Import the auth blueprint
-from models import db  # Import db from models.py
+from auth import auth
+from models import db
 import os
 import requests
 import logging
 from dotenv import load_dotenv
 from datetime import datetime
 import time
+from sentence_transformers import SentenceTransformer
+import numpy as np
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-# Toggle between mock mode and live API mode for testing and debugging
+# -----------------------------
+# Config
+# -----------------------------
 USE_MOCK_DATA = False
-
 load_dotenv()
 
 youtube_API_key = os.getenv('YOUTUBE_API_KEY')
 twitter_bearer_token = os.getenv('TWITTER_BEARER_TOKEN')
 
 if not youtube_API_key or not twitter_bearer_token:
-    raise ValueError("API keys not found. Make sure your .env file contains YOUTUBE_API_KEY and TWITTER_API_KEY")
+    raise ValueError("API keys missing. Check .env file.")
 
-# Initialize Flask app and allow CORS
+# Flask init
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://localhost:5173", "https://proud-beach-0f5f24200.6.azurestaticapps.net"]}}) 
+CORS(app, supports_credentials=True)
 
-
-# App configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    'mysql+pymysql://adminuser:rajan123@@mydatabase.mysql.database.azure.com:3306/mydatabase?ssl_mode=DISABLED' 
-)
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/comment-analyser'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Initialize SQLAlchemy with the app
 db.init_app(app)
-
-# Register the auth blueprint
 app.register_blueprint(auth)
 
-# Initialize logging
+# Logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[logging.StreamHandler(), logging.FileHandler("app.log")]
 )
 
-# Load environment variables
-twitter_bearer_token = os.getenv('TWITTER_BEARER_TOKEN')
-
-if not twitter_bearer_token:
-    logging.error("Twitter API key not found. Make sure your .env file contains TWITTER_BEARER_TOKEN.")
-    raise ValueError("Twitter API key not found.")
-
-# Load the trained sentiment analysis model
-try:
-    model_pipeline = joblib.load('sentiment_model.pkl')
-    logging.info("Sentiment model loaded successfully.")
-except FileNotFoundError:
-    logging.error("Sentiment model file not found. Ensure 'sentiment_model.pkl' is in the correct path.")
-    raise Exception("Sentiment model file not found.")
-
-# Pre-download NLTK resources
+# -----------------------------
+# NLTK Setup
+# -----------------------------
 nltk_data_dir = os.path.expanduser('~') + '/nltk_data'
 if not os.path.exists(nltk_data_dir):
     os.makedirs(nltk_data_dir, exist_ok=True)
     nltk.download('stopwords', download_dir=nltk_data_dir)
     nltk.download('wordnet', download_dir=nltk_data_dir)
-
 nltk.data.path.append(nltk_data_dir)
 
-# Load stopwords and lemmatizer
 stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
 
-# Preprocess function to clean the text
+# -----------------------------
+# Load MiniLM + SVM Model
+# -----------------------------
+MODEL_DIR = "saved_models"
+
+try:
+    clf = joblib.load(os.path.join(MODEL_DIR, "svm_miniLM_calibrated.joblib"))
+    meta = joblib.load(os.path.join(MODEL_DIR, "pipeline_meta.joblib"))
+    embed_model = SentenceTransformer(meta["embed_model_name"])
+    logging.info("MiniLM + SVM sentiment model loaded.")
+except Exception as e:
+    logging.error(f"Model load failed: {e}")
+    raise Exception("Cannot load sentiment model.")
+
+# -----------------------------
+# Preprocessing
+# -----------------------------
+url_pattern = re.compile(r"https?://\S+|www\.\S+")
+multi_punct = re.compile(r"([!?.,]){2,}")
+multi_space = re.compile(r"\s{2,}")
+
 def preprocess_text(text):
-    if not text:
+    if pd.isna(text) or not text:
         return ""
-    try:
-        text = text.lower()  # Lowercase the text
-        text = re.sub(r'\d+', '', text)  # Remove numbers
-        text = re.sub(r'[^\w\s]', '', text)  # Remove punctuation
-        text = ' '.join([lemmatizer.lemmatize(word) for word in text.split() if word not in stop_words])  # Remove stopwords & lemmatize
-        return text
-    except Exception as e:
-        logging.error(f"Error during text preprocessing: {e}")
-        return ""
+    t = str(text)
+    t = url_pattern.sub("", t)
+    t = t.replace("\n", " ").strip()
+    t = multi_punct.sub(r"\1", t)
+    t = re.sub(r"(.)\1{3,}", r"\1\1\1", t)
+    t = multi_space.sub(" ", t)
+    t = t.lower()
+    t = re.sub(r'\d+', '', t)
+    t = re.sub(r'[^\w\s]', '', t)
+    t = ' '.join([lemmatizer.lemmatize(w) for w in t.split() if w not in stop_words])
+    return t.strip()
+
+# -----------------------------
+# Lexicon Features
+# -----------------------------
+analyzer = SentimentIntensityAnalyzer()
+# Positive emojis
+pos_emo = set([
+    "😊","😀","😄","😁","😍","👍","🎉","🙂","😃",
+    "🥳","🤩","😎","😇","🤗","💖","💛","💚","💙","💜",
+    "✨","🌟","🎶","😺","🙌","🤝","💯","😌","😋","🥰","❤️"
+])
+
+# Negative emojis
+neg_emo = set([
+    "😞","😠","😡","😢","😔","👎","😒","😩","😖","😿","😭",
+    "😣","😫","😱","😤","😖","😓","🤯","☹️","🙁","💔",
+    "😪","😷","🤢","🤮","😨","😬"
+])
 
 
-# Fetch comments from YouTube using the YouTube Data API
+def emoji_sentiment_score(text):
+    return sum(c in pos_emo for c in text) - sum(c in neg_emo for c in text)
+
+def extract_lexicon_features(text):
+    vs = analyzer.polarity_scores(text)
+    caps_ratio = sum(1 for c in text if c.isupper()) / (len(text)+1)
+    return [
+        vs["pos"], vs["neg"], vs["neu"], vs["compound"],
+        emoji_sentiment_score(text),
+        text.count("!"),
+        caps_ratio,
+        len(text)
+    ]
+
+# -----------------------------
+# Embeddings + Prediction
+# -----------------------------
+def embed_texts(texts, batch_size=64):
+    out = []
+    for i in range(0, len(texts), batch_size):
+        emb = embed_model.encode(texts[i:i+batch_size], convert_to_numpy=True, show_progress_bar=False)
+        out.append(emb)
+    return np.vstack(out)
+
+def predict_comments(comments):
+    clean = [preprocess_text(t) for t in comments]
+
+    emb = embed_texts(clean)
+
+    if meta["use_lexicon"]:
+        lex_feats = np.array([extract_lexicon_features(t) for t in clean], dtype=float)
+        scaler_local = meta["lex_scaler"]
+        if scaler_local is not None:
+            lex_feats = scaler_local.transform(lex_feats)
+        X_all = np.hstack([emb, lex_feats])
+    else:
+        X_all = emb
+
+    preds = clf.predict(X_all)
+    probs = clf.predict_proba(X_all)
+
+    return preds, probs
+
+# -----------------------------
+# Safe YouTube Video ID Extractor
+# -----------------------------
+def extract_video_id(url):
+    patterns = [
+        r"v=([a-zA-Z0-9_-]{11})",
+        r"youtu\.be/([a-zA-Z0-9_-]{11})",
+        r"shorts/([a-zA-Z0-9_-]{11})"
+    ]
+    for p in patterns:
+        match = re.search(p, url)
+        if match:
+            return match.group(1)
+    return None
+
+# -----------------------------
+# Fetch YouTube Comments
+# -----------------------------
 def fetch_youtube_comments(video_id, api_key):
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=api_key)
-
     comments = []
     next_page_token = None
 
     while True:
-        # Fetch comments using the API
-        request = youtube.commentThreads().list(
+        req = youtube.commentThreads().list(
             part="snippet",
             videoId=video_id,
             maxResults=100,
             pageToken=next_page_token
         )
-        response = request.execute()
+        res = req.execute()
 
-        # Append the comments
-        for item in response["items"]:
+        for item in res["items"]:
             comment = item["snippet"]["topLevelComment"]["snippet"]["textOriginal"]
             comments.append(comment)
 
-        # Check if there are more comments to fetch
-        next_page_token = response.get("nextPageToken")
+        next_page_token = res.get("nextPageToken")
         if not next_page_token:
             break
 
     return comments
 
-# Route for receiving the video URL and processing the comments
+# -----------------------------
+# Analyze Comments Route
+# -----------------------------
 @app.route('/api/comments', methods=['POST'])
 def analyze_comments():
     try:
-        # Get the request data from frontend
         data = request.json
         video_url = data.get('video_url')
+
         if not video_url:
             return jsonify({"error": "No video URL provided"}), 400
 
-        api_key = youtube_API_key  # Replace with your API key
+        video_id = extract_video_id(video_url)
+        if not video_id:
+            return jsonify({"error": "Invalid YouTube URL"}), 400
 
-        # Extract video ID from YouTube URL
-        video_id = video_url.split("v=")[-1]
+        comments = fetch_youtube_comments(video_id, youtube_API_key)
 
-        # Fetch comments using YouTube Data API
-        comments = fetch_youtube_comments(video_id, api_key)
         if not comments:
             return jsonify({"error": "No comments found"}), 404
 
-        # Preprocess the comments
-        cleaned_comments = [preprocess_text(comment) for comment in comments]
+        preds, probs = predict_comments(comments)
 
-        # Convert the cleaned comments into a DataFrame for analysis
-        df = pd.DataFrame(cleaned_comments, columns=['Cleaned_Comment'])
-
-        # Analyze the comments using the pre-trained model and get probabilities
-        probabilities = model_pipeline.predict_proba(df['Cleaned_Comment'])
-
-        # Process the probabilities to return the sentiment with the highest confidence
+        sentiment_map = {0: "negative", 1: "neutral", 2: "positive"}
         results = []
         for i, comment in enumerate(comments):
-            prob = probabilities[i]
-            max_prob = max(prob)
-            sentiment = "positive" if prob[2] == max_prob else "neutral" if prob[1] == max_prob else "negative"
+            pred_label = sentiment_map[int(preds[i])]  # convert int64 to int then map
+            max_prob = float(max(probs[i]))            # convert np.float64 to float
             results.append({
-                "comment": comment,
-                "sentiment": sentiment,
-                "confidence": round(max_prob * 100, 2)  # Return percentage confidence
-            })
+                "comment": comment,                     # original comment
+                "sentiment": pred_label,                # textual sentiment
+                "confidence": round(max_prob * 100, 2)  # confidence %
+    })
 
-        # Return the result as JSON
         return jsonify(results)
 
     except Exception as e:
+        logging.error(str(e))
         return jsonify({"error": str(e)}), 500
 
-# Load stopwords and lemmatizer
-stop_words = set(stopwords.words('english'))
-lemmatizer = WordNetLemmatizer()
-
-# Cache for storing fetched tweets to reduce API calls
-tweet_cache = {}
-
-# Extract the tweet ID from a URL
-def extract_tweet_id(url):
-    match = re.search(r"status/(\d+)", url)
-    return match.group(1) if match else None
-
-# Mock tweet data for testing
-mock_tweet_data = {
-    "1453489038376132610": "Just watched an incredible sunset over the mountains! #blessed",
-    "1453489123947812874": "Excited for the big game tonight. Let’s go, team! 🏈 #GameDay",
-    "1453489231094845442": "Looking for book recommendations—what’s everyone reading these days? 📚",
-}
-
-# Fetch a single tweet by ID with rate limit handling and caching
-def fetch_tweet_by_id(tweet_id, api_key):
-    if USE_MOCK_DATA:
-        # Mock data logic
-        if tweet_id in mock_tweet_data:
-            logging.info(f"Using mock data for tweet ID: {tweet_id}")
-            return mock_tweet_data[tweet_id]
-        logging.warning(f"Tweet ID {tweet_id} not found in mock data.")
-        return None
-    else:
-        # Cache and API call logic
-        if tweet_id in tweet_cache:
-            logging.info(f"Tweet found in cache: {tweet_id}")
-            return tweet_cache[tweet_id]
-
-        headers = {"Authorization": f"Bearer {api_key}"}
-        url = f"https://api.twitter.com/2/tweets/{tweet_id}"
-
-        try:
-            response = requests.get(url, headers=headers)
-            if response.status_code == 200:
-                data = response.json()
-                tweet_text = data.get("data", {}).get("text")
-                tweet_cache[tweet_id] = tweet_text
-                return tweet_text
-            elif response.status_code == 429:
-                retry_after = int(response.headers.get("x-rate-limit-reset", time.time() + 60)) - int(time.time())
-                logging.warning(f"Rate limit exceeded. Retrying after {retry_after} seconds.")
-                time.sleep(max(retry_after, 1))
-            else:
-                logging.error(f"Failed to fetch tweet by ID {tweet_id}. Status code: {response.status_code}")
-        except Exception as e:
-            logging.error(f"Error fetching tweet by ID {tweet_id}: {e}")
-        return None
-
-
-# Route to analyze a single tweet
-@app.route('/api/tweets', methods=['POST'])
-def analyze_tweet():
-    try:
-        data = request.json
-        query = data.get('query')
-
-        if not query:
-            logging.error("Query validation failed: No query provided in the request.")
-            return jsonify({"error": "No query provided"}), 400
-
-        # Check if the query is a URL and extract the tweet ID
-        if query.startswith("http") and "status" in query:
-            tweet_id = extract_tweet_id(query)
-            if not tweet_id:
-                logging.error(f"Invalid Twitter URL provided: {query}")
-                return jsonify({"error": "Invalid Twitter URL format"}), 400
-
-            # Fetch the tweet by ID
-            tweet = fetch_tweet_by_id(tweet_id, twitter_bearer_token)
-            if not tweet:
-                logging.info(f"No tweet found for ID: {tweet_id}")
-                return jsonify({"error": "Tweet not found"}), 404
-        else:
-            # Treat the query as raw tweet text
-            tweet = query
-
-        # Process and analyze the single tweet
-        cleaned_tweet = preprocess_text(tweet)
-        probabilities = model_pipeline.predict_proba([cleaned_tweet])[0]
-        max_prob = max(probabilities)
-        sentiment = "positive" if probabilities[2] == max_prob else "neutral" if probabilities[1] == max_prob else "negative"
-
-        result = {
-            "tweet": tweet,
-            "sentiment": sentiment,
-            "confidence": round(max_prob * 100, 2)
-        }
-
-        logging.info(f"Sentiment analysis completed.")
-        return jsonify(result)
-
-    except Exception as e:
-        logging.error(f"Error in /api/tweets route: {e}")
-        return jsonify({"error": str(e)}), 500
- 
-try:   
-    # Load the pre-trained vectorizer (assumes it was saved alongside the model)
-    vectorizer = joblib.load('vectorizer.pkl')
-
-    # Load the pre-trained spam detection model
-    spam_model = joblib.load('spam_model.pkl')
-except:
-    logging.error("Error loading spam detection model. Make sure 'vectorizer.pkl' and 'spam_model.pkl' are in the correct path.")
-    raise Exception("Error loading spam detection model.")
-
-# Route for spam detection
-@app.route('/api/spam', methods=['POST'])
-def detect_spam():
-    try:
-        data = request.json
-        message = data.get('message')
-        if not message:
-            return jsonify({"error": "No message provided"}), 400
-
-        # Preprocess the message
-        cleaned_message = preprocess_text(message)
-
-        # Transform the text into numeric form using the vectorizer
-        transformed_message = vectorizer.transform([cleaned_message])  # Returns a sparse matrix
-
-        # Predict spam or non-spam
-        prediction = spam_model.predict(transformed_message)
-        prediction_prob = spam_model.predict_proba(transformed_message)
-
-        # Assuming 0 is non-spam, 1 is spam
-        is_spam = bool(prediction[0] == 1)  # Explicitly cast to Python bool
-        confidence = float(max(prediction_prob[0]))  # Cast confidence to Python float
-
-        return jsonify({
-            "isSpam": is_spam,
-            "confidence": confidence
-        })
-
-    except Exception as e:
-        print(f"Error: {str(e)}")  # Log the error for debugging
-        return jsonify({"error": str(e)}), 500
-    
-# Route for base URL
+# -----------------------------
+# Base
+# -----------------------------
 @app.route('/')
 def index():
     return "API for YouTube Comment Analysis is running."
 
-# Make sure this is at the bottom
 def get_app():
     return app
+
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=5000, debug=True)

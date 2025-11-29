@@ -62,7 +62,11 @@ const Signup = () => {
         navigate("/login"); // Redirect to login page after successful signup
       }
     } catch (error) {
-      setError("Registration failed. Please check your details.");
+      console.error("Signup error:", error.response.data.message);
+      setError(
+        error.response.data.message ||
+          "Registration failed. Please check your details."
+      );
       setMessage("");
     }
   };

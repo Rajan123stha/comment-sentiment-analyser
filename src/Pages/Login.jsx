@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { useAuth } from "../AuthContext"; // Import your AuthContext
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 import login from "../assets/login.jpg";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  const navigate = useNavigate(); // Initialize useNavigate
-  const { setUser } = useAuth(); // Get setUser from AuthContext
+  const navigate = useNavigate();
+  const { setUser } = useAuth(); // persistent setUser
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,13 +21,18 @@ const Login = () => {
         email,
         password,
       });
+
       if (response.data.status === "success") {
         setMessage("Login successful!");
         setError("");
-        setUser({ email }); // Set the logged-in user
-        navigate("/commentanalyzer"); // Redirect to home page
+
+        const userData = { email };
+        setUser(userData); // automatically saved to localStorage via AuthContext
+
+        navigate("/commentanalyzer");
       }
     } catch (error) {
+      console.error("Login error:", error);
       setError("Invalid email or password. Please try again.");
       setMessage("");
     }
@@ -40,10 +45,11 @@ const Login = () => {
         alt=" login"
         className="w-[30rem] mt-[2.5rem] h-[26.1rem] max-w-[98%] object-cover shadow-md hidden lg:block"
       />
-      <div className="w-full max-w-sm p-9 pr-[3rem] mt-10 bg-white pb-[2.1rem]   shadow-md">
+      <div className="w-full max-w-sm p-9 pr-[3rem] mt-10 bg-white pb-[2.1rem] shadow-md">
         <h2 className="text-2xl font-bold ml-[7rem] text-[2rem] text-[#1E3A8A] mb-6">
           Login
         </h2>
+
         <form className="flex flex-col" onSubmit={handleLogin}>
           <div className="mb-5">
             <label
@@ -57,11 +63,13 @@ const Login = () => {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-300 rounded-md text-gray-900 
+                         focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your email"
               required
             />
           </div>
+
           <div className="mb-6">
             <label
               htmlFor="password"
@@ -74,27 +82,33 @@ const Login = () => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-300 rounded-md text-gray-900 
+                         focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your password"
               required
             />
           </div>
+
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
           {message && (
             <p className="text-green-500 text-center mb-4">{message}</p>
           )}
+
           <button
             type="submit"
-            className="w-full p-3 bg-[#14B8A6] text-white rounded-md hover:green-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            className="w-full p-3 bg-[#14B8A6] text-white rounded-md 
+                       hover:bg-green-500 focus:outline-none 
+                       focus:ring-2 focus:ring-blue-500"
           >
             Login
           </button>
         </form>
+
         <p className="text-center mt-6 text-gray-600 text-sm">
           Don't have an account?{" "}
           <Link
             to="/signup"
-            className="text-[#1E3A8A] hover:text-green-500   hover:underline"
+            className="text-[#1E3A8A] hover:text-green-500 underline"
           >
             Signup
           </Link>
