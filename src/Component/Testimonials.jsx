@@ -2,25 +2,35 @@ import { motion } from "framer-motion";
 
 export default function TestimonialsSection() {
   return (
-    <section className="bg-[#F9FAFB] py-20 px-6">
-      <div className="max-w-7xl mx-auto text-center">
+    <section className="bg-gradient-to-b from-[#F9FAFB] to-white py-24 px-6">
+      <div className="max-w-7xl mx-auto">
         {/* Section Heading */}
-        <motion.h2
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-5xl font-extrabold text-[#1E3A8A] mb-6"
-        >
-          What Our Users Say
-        </motion.h2>
-
-        <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-          See how Reactify is transforming YouTube content analysis for
-          creators, researchers, and businesses.
-        </p>
+        <div className="text-center mb-16">
+          <motion.span
+            initial={{ opacity: 0, y: -10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-block px-4 py-1.5 bg-blue-100 text-[#1E3A8A] text-sm font-medium rounded-full mb-4"
+          >
+            ⭐ Testimonials
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-4xl md:text-5xl font-extrabold text-[#1E3A8A] mb-6"
+          >
+            What Our Users Say
+          </motion.h2>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            See how Reactify is transforming YouTube content analysis for
+            creators, researchers, and businesses.
+          </p>
+        </div>
 
         {/* Testimonials */}
-        <div className="grid md:grid-cols-3 gap-10 mt-16">
+        <div className="grid md:grid-cols-3 gap-8 mt-12">
           {[
             {
               name: "Rajesh Kumar",
@@ -44,51 +54,77 @@ export default function TestimonialsSection() {
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
-              className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all transform hover:scale-105 text-left border border-gray-200"
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ y: -5 }}
+              className="bg-white p-8 rounded-3xl shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 relative"
             >
-              <div className="flex items-center space-x-4">
-                <span className="text-5xl">{testimonial.avatar}</span>
-                <h3 className="text-lg font-semibold text-[#1E3A8A]">
-                  {testimonial.name}
-                </h3>
+              {/* Quote Icon */}
+              <div className="absolute top-6 right-6 text-5xl text-gray-100 font-serif">
+                "
               </div>
-              <p className="text-gray-700 mt-3 text-left">
-                {testimonial.review}
+
+              {/* Rating Stars */}
+
+              <p className="text-gray-700 leading-relaxed mb-6 relative z-10">
+                "{testimonial.review}"
               </p>
+
+              <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-100 to-teal-100 flex items-center justify-center text-2xl">
+                  {testimonial.avatar}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-[#1E3A8A]">
+                    {testimonial.name}
+                  </h3>
+                  <p className="text-sm text-gray-500">Verified User</p>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
 
         {/* AI Insights Section */}
-        <div className="mt-24">
-          <h2 className="text-5xl font-extrabold text-[#1E3A8A]">
+        <div className="mt-28 text-center">
+          <motion.span
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="inline-block px-4 py-1.5 bg-teal-100 text-teal-700 text-sm font-medium rounded-full mb-4"
+          >
+            🚀 Our Impact
+          </motion.span>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-[#1E3A8A] mb-4">
             AI-Powered Insights
           </h2>
-          <p className="text-gray-600 text-lg mt-4 max-w-2xl mx-auto">
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
             Reactify has analyzed millions of comments with unmatched accuracy
             and speed.
           </p>
 
           {/* Animated Stats */}
-          <div className="flex flex-wrap justify-center gap-12 mt-12">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-14 max-w-4xl mx-auto">
             {[
-              { label: "Comments Analyzed", value: "1K+" },
-              { label: "Accuracy Rate", value: "80%+" },
-              { label: "Comments Downloaded", value: "1k+" },
+              { label: "Comments Analyzed", value: "1K+", icon: "💬" },
+              { label: "Accuracy Rate", value: "80%+", icon: "🎯" },
+              { label: "Happy Users", value: "500+", icon: "😊" },
             ].map((stat, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                className="bg-white px-10 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 text-center border border-gray-200"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                whileHover={{ scale: 1.03 }}
+                className="bg-white p-8 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
               >
-                <h3 className="text-5xl font-bold text-[#14B8A6]">
+                <div className="text-4xl mb-3">{stat.icon}</div>
+                <h3 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#1E3A8A] to-[#14B8A6] bg-clip-text text-transparent">
                   {stat.value}
                 </h3>
-                <p className="text-gray-700 text-lg mt-2">{stat.label}</p>
+                <p className="text-gray-600 mt-2 font-medium">{stat.label}</p>
               </motion.div>
             ))}
           </div>
