@@ -140,29 +140,78 @@ const CommentAnalyzer = () => {
     }
   };
 
-  const renderTable = (comments, sentiment) => (
-    <div id={sentiment.toLowerCase()} className="mb-4 w-4/5 mx-auto">
-      <h2 className="text-xl font-bold">{sentiment} Comments (Top 30%)</h2>
-      <table className="min-w-full bg-white border border-gray-300">
-        <thead>
-          <tr>
-            <th className="border px-4 py-2 bg-gray-200">SN</th>
-            <th className="border px-4 py-2 bg-gray-200">Comments</th>
-            <th className="border px-4 py-2 bg-gray-200">Confidence (%)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {comments.map((comment, index) => (
-            <tr key={index}>
-              <td className="border px-4 py-2">{index + 1}</td>
-              <td className="border px-4 py-2">{comment.comment}</td>
-              <td className="border px-4 py-2">{comment.confidence}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+  const renderTable = (comments, sentiment) => {
+    const colors = {
+      Positive: {
+        bg: "bg-blue-50",
+        border: "border-blue-300",
+        header: "bg-[#1E3A8A]",
+        icon: "😊",
+      },
+      Negative: {
+        bg: "bg-red-50",
+        border: "border-red-200",
+        header: "bg-red-600",
+        icon: "😠",
+      },
+      Neutral: {
+        bg: "bg-yellow-50",
+        border: "border-yellow-200",
+        header: "bg-yellow-600",
+        icon: "😐",
+      },
+    };
+    const style = colors[sentiment];
+
+    return (
+      <div
+        id={sentiment.toLowerCase()}
+        className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
+      >
+        <div className={`${style.header} px-6 py-4 flex items-center gap-3`}>
+          <span className="text-2xl">{style.icon}</span>
+          <h2 className="text-xl font-bold text-white">{sentiment} Comments</h2>
+          <span className="ml-auto bg-white/20 px-3 py-1 rounded-full text-white text-sm">
+            Top 30% ({comments.length})
+          </span>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className={style.bg}>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-16">
+                  #
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Comment
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">
+                  Confidence
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {comments.map((comment, index) => (
+                <tr key={index} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-500 text-sm">
+                    {index + 1}
+                  </td>
+                  <td className="px-6 py-4 text-gray-700">{comment.comment}</td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${style.bg} ${style.border} border`}
+                    >
+                      {comment.confidence}%
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
 
   const handleScroll = () => {
     if (window.scrollY > 200) setShowScrollTop(true);
@@ -212,113 +261,241 @@ const CommentAnalyzer = () => {
   };
 
   return (
-    <div className="p-4 font-sans">
-      <div className="mb-4 text-center mt-8">
-        <input
-          type="text"
-          placeholder="Paste YouTube video URL here"
-          value={videoUrl}
-          onChange={(e) => setVideoUrl(e.target.value)}
-          className="border p-2 w-1/2 mr-2 rounded"
-        />
-        <button
-          onClick={fetchComments}
-          className="p-2 bg-green-500 text-white rounded hover:bg-green-600"
-          disabled={loading || (!user && !admin)}
-        >
-          {loading ? "Analysing..." : "Analyse Comments"}
-        </button>
-        {error && <p className="text-red-500 mt-2">{error}</p>}
-
-        {loading && !error && (
-          <div className="flex justify-center mt-8">
-            <Spinner />
-          </div>
-        )}
-
-        {!user && !admin && (
-          <p className="text-red-500 mt-2">
-            You need to log in as a user or admin to analyze comments.
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-[#0F172A] via-[#1E3A8A] to-[#14B8A6] py-16 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            YouTube Comment Analyzer
+          </h1>
+          <p className="text-white/80 mb-8">
+            Analyze sentiment from YouTube comments using AI-powered insights
           </p>
-        )}
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-2xl mx-auto">
+            <input
+              type="text"
+              placeholder="Paste YouTube video URL here..."
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              className="w-full sm:flex-1 px-5 py-3.5 rounded-xl border-0 shadow-lg focus:ring-2 focus:ring-white/50 focus:outline-none text-gray-700 placeholder-gray-400"
+            />
+            <button
+              onClick={fetchComments}
+              disabled={loading || (!user && !admin)}
+              className="w-full sm:w-auto px-8 py-3.5 bg-white text-[#0F172A] font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  Analyzing...
+                </>
+              ) : (
+                <>🔍 Analyze Comments</>
+              )}
+            </button>
+          </div>
+
+          {error && (
+            <div className="mt-4 px-4 py-3 bg-red-500/20 border border-red-400/30 rounded-lg text-white text-sm">
+              {error}
+            </div>
+          )}
+
+          {!user && !admin && (
+            <p className="mt-4 text-yellow-200 text-sm">
+              ⚠️ Please log in to analyze comments
+            </p>
+          )}
+        </div>
       </div>
 
-      {/* Render pie chart */}
+      {/* Loading State */}
+      {loading && !error && (
+        <div className="flex flex-col items-center justify-center py-20">
+          <Spinner />
+          <p className="mt-4 text-gray-500">Analyzing comments...</p>
+        </div>
+      )}
+
+      {/* Results Section */}
       {chartData && (
-        <div className="flex flex-col md:flex-row justify-center items-start mt-12 mb-8">
-          <div className="w-full md:w-1/2 lg:w-1/3 mx-auto">
-            <h2 className="text-2xl font-semibold text-gray-800 mt-4 mb-6 text-center">
-              Sentiment Distribution
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center text-2xl">
+                  😊
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Positive</p>
+                  <p className="text-3xl font-bold text-[#1E3A8A]">
+                    {sentimentPercentages.positive}%
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#1E3A8A] rounded-full"
+                  style={{ width: `${sentimentPercentages.positive}%` }}
+                ></div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-xl bg-red-100 flex items-center justify-center text-2xl">
+                  😠
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Negative</p>
+                  <p className="text-3xl font-bold text-red-500">
+                    {sentimentPercentages.negative}%
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-red-500 rounded-full"
+                  style={{ width: `${sentimentPercentages.negative}%` }}
+                ></div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-xl bg-yellow-100 flex items-center justify-center text-2xl">
+                  😐
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Neutral</p>
+                  <p className="text-3xl font-bold text-yellow-500">
+                    {sentimentPercentages.neutral}%
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-yellow-500 rounded-full"
+                  style={{ width: `${sentimentPercentages.neutral}%` }}
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Chart Section */}
+          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mb-12">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+              📊 Sentiment Distribution
             </h2>
-            <Pie
-              data={chartData}
-              options={{
-                plugins: {
-                  tooltip: {
-                    callbacks: {
-                      label: function (tooltipItem) {
-                        const { label } = tooltipItem;
-                        const percentage =
-                          sentimentPercentages[label.toLowerCase()];
-                        return `${label}: ${tooltipItem.raw} (${percentage}%)`;
+            <div className="max-w-md mx-auto">
+              <Pie
+                data={chartData}
+                options={{
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: function (tooltipItem) {
+                          const { label } = tooltipItem;
+                          const percentage =
+                            sentimentPercentages[label.toLowerCase()];
+                          return `${label}: ${tooltipItem.raw} (${percentage}%)`;
+                        },
+                      },
+                    },
+                    legend: {
+                      position: "bottom",
+                      labels: {
+                        padding: 20,
+                        usePointStyle: true,
                       },
                     },
                   },
-                },
-                onClick: (event, elements) => {
-                  if (elements.length > 0) {
-                    // Get the clicked segment
-                    const segmentIndex = elements[0].index;
-                    const label = chartData.labels[segmentIndex];
-
-                    // Scroll to the respective section
-                    if (label === "Positive") {
-                      document.getElementById("positive").scrollIntoView({
-                        behavior: "smooth",
-                      });
-                    } else if (label === "Negative") {
-                      document.getElementById("negative").scrollIntoView({
-                        behavior: "smooth",
-                      });
-                    } else if (label === "Neutral") {
-                      document.getElementById("neutral").scrollIntoView({
-                        behavior: "smooth",
-                      });
+                  onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                      const segmentIndex = elements[0].index;
+                      const label = chartData.labels[segmentIndex];
+                      document
+                        .getElementById(label.toLowerCase())
+                        ?.scrollIntoView({
+                          behavior: "smooth",
+                        });
                     }
-                  }
-                },
-              }}
-            />
+                  },
+                }}
+              />
+            </div>
+            <p className="text-center text-gray-500 text-sm mt-4">
+              Click on a segment to view comments
+            </p>
           </div>
         </div>
       )}
 
-      <div className="mt-12">
-        {renderTable(positiveComments, "Positive")}
-        {renderTable(negativeComments, "Negative")}
-        {renderTable(neutralComments, "Neutral")}
-      </div>
-      <div className=" mt-12  flex justify-center">
-        <button
-          onClick={downloadCSV}
-          className="p-2 bg-green-500 text-white  hover:bg-green-600"
-          disabled={
-            loading ||
-            (!positiveComments.length &&
-              !negativeComments.length &&
-              !neutralComments.length)
-          }
-        >
-          Download CSV
-        </button>
-      </div>
+      {/* Comments Tables */}
+      {(positiveComments.length > 0 ||
+        negativeComments.length > 0 ||
+        neutralComments.length > 0) && (
+        <div className="max-w-7xl mx-auto px-4 pb-12">
+          <div className="space-y-8">
+            {renderTable(positiveComments, "Positive")}
+            {renderTable(negativeComments, "Negative")}
+            {renderTable(neutralComments, "Neutral")}
+          </div>
+
+          {/* Download Button */}
+          <div className="flex justify-center mt-12">
+            <button
+              onClick={downloadCSV}
+              disabled={
+                loading ||
+                (!positiveComments.length &&
+                  !negativeComments.length &&
+                  !neutralComments.length)
+              }
+              className="px-8 py-4 bg-gradient-to-r from-[#0F172A] to-[#14B8A6] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 disabled:opacity-50 flex items-center gap-2"
+            >
+              📥 Download Full Report (CSV)
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Scroll to Top Button */}
       {showScrollTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-20 left-6 p-3 bg-green-500 text-white  hover:bg-green-600  rounded-full shadow-lg  transition duration-200"
+          className="fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-r from-[#0F172A] to-[#14B8A6] text-white rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200 flex items-center justify-center"
           aria-label="Scroll to top"
         >
-          ↑
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 10l7-7m0 0l7 7m-7-7v18"
+            />
+          </svg>
         </button>
       )}
     </div>

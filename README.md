@@ -1,12 +1,15 @@
-# React + Vite
-A functional website that fetches YouTube comments and analyses the sentiments(positive, negative, and neutral) of the comments.
+Run the code using following:
 
-To run Frontend: npm run dev
-To run backend: python app.py
+To run the frontent code:
+- npm install
+- npm run dev
 
-React
-Frontend is developed using React and tailwind CSS.
+To run the backend code:
+- python app.py
 
-Python 
-Backend is done in Python.
+#### Make sure to create:
+-.\backend\.env
+- Contents of .env:
 
+  YOUTUBE_API_KEY="api_key"
+  TWITTER_API_KEY="api_key"
